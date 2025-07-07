@@ -75,25 +75,10 @@ def LocalPCA(PopDec, M, K):
 
     ## Calculate the probability of each cluster for reproduction
     # Calculate the volume of each cluster
-    volume = []
-    for k in range(K):
-        try:
-            b_val = np.atleast_1d(Model[k]['b']).flatten()
-            a_val = np.atleast_1d(Model[k]['a']).flatten()
-            
-            # Ensure both arrays have the same length
-            min_len = min(len(b_val), len(a_val))
-            b_val = b_val[:min_len]
-            a_val = a_val[:min_len]
-            
-            vol_diff = np.sum(b_val - a_val)  # Sum to get scalar value
-            volume.append(vol_diff)
-        except Exception as e:
-            print(f"Warning: Error processing model {k}: {e}")
-            volume.append(0.0)  # Default value
-
-    volume = np.array(volume)  # Now should be scalar values, safe to convert
-
+    volume = np.array([Model[k]['b'] for k in range(K)]) - np.array(
+        [Model[k]['a'] for k in range(K)])  # this should be tested
+    volume1 = np.array([np.prod(row) for row in volume])
+    #    volume = prod(cat(1,Model.b)-cat(1,Model.a),2)
     # Calculate the cumulative probability of each cluster
-    probability = np.cumsum(volume / np.sum(volume))
+    probability = np.cumsum(volume1 / np.sum(volume1))
     return Model, probability
