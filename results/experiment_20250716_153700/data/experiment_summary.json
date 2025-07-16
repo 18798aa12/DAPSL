@@ -1,0 +1,34 @@
+{
+  "experiment_info": {
+    "start_time": "2025-07-16 15:37:00",
+    "end_time": "2025-07-16 16:17:22",
+    "duration_seconds": 2421.605369,
+    "duration_str": "0:40:21.605369",
+    "base_directory": "results\\experiment_20250716_153700"
+  },
+  "parameters": {
+    "n_runs": 2,
+    "n_init": 100,
+    "n_iterations": 20,
+    "n_samples_per_iter": 5,
+    "coef_lcb": 0.1,
+    "n_candidate": 1000,
+    "device": "cuda"
+  },
+  "problems_tested": [
+    "catboost_min"
+  ],
+  "results_summary": {
+    "catboost_min": {
+      "initial_hv_mean": 11.90194536489869,
+      "initial_hv_std": 0.022614550662893862,
+      "final_hv_mean": 11.975732923615647,
+      "final_hv_std": 0.006432596873846563,
+      "improvement_mean": 0.07378755871695653,
+      "improvement_percentage": 0.6199621696682576,
+      "best_hv": 11.982165520489493,
+      "worst_hv": 11.9693003267418,
+      "convergence_stability": 0.0005371359661137524
+    }
+  }
+}
