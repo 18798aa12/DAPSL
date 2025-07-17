@@ -1,0 +1,24 @@
+{
+  "directories": {
+    "base": "results\\experiment_20250716_182226",
+    "logs": "results\\experiment_20250716_182226\\logs",
+    "data": "results\\experiment_20250716_182226\\data",
+    "plots": "results\\experiment_20250716_182226\\plots",
+    "pareto_fronts": "results\\experiment_20250716_182226\\pareto_fronts",
+    "models": "results\\experiment_20250716_182226\\models",
+    "populations": "results\\experiment_20250716_182226\\populations"
+  },
+  "key_files": {
+    "experiment_log": "results\\experiment_20250716_182226\\logs\\experiment.log",
+    "complete_results": "results\\experiment_20250716_182226\\data\\hv_list_complete.pkl",
+    "experiment_summary": "results\\experiment_20250716_182226\\data\\experiment_summary.json",
+    "convergence_plots": "results\\experiment_20250716_182226\\plots",
+    "pareto_fronts": "results\\experiment_20250716_182226\\pareto_fronts",
+    "population_data": "results\\experiment_20250716_182226\\populations"
+  },
+  "file_counts": {
+    "pareto_front_files": 42,
+    "population_files": 42,
+    "plot_files": 1
+  }
+}

@@ -502,6 +502,82 @@ class DAPSLResultAnalyzer:
         
         return df
     
+    def export_results_to_excel(self, problem_name="catboost_min", run_id=0):
+        """导出结果到Excel文件"""
+        try:
+            results = self.analyze_final_results(problem_name, run_id)
+            if results is None:
+                print(f"❌ 无法获取运行 {run_id} 的结果数据")
+                return
+            
+            final_X = results['final_X']
+            final_Y = results['final_Y']
+            pareto_optimal_X = results['pareto_optimal_X']
+            pareto_optimal_Y = results['pareto_optimal_Y']
+            feature_names = self.get_feature_names()
+            
+            # 创建Excel writer
+            if self.current_experiment:
+                excel_path = self.current_experiment / "data" / f"analysis_results_{problem_name}_run{run_id}.xlsx"
+                
+                with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+                    # 工作表1：Pareto最优解
+                    pareto_df = pd.DataFrame(pareto_optimal_X, columns=feature_names[:pareto_optimal_X.shape[1]])
+                    pareto_df['Objective_1'] = pareto_optimal_Y[:, 0]
+                    pareto_df['Objective_2'] = pareto_optimal_Y[:, 1]
+                    pareto_df.to_excel(writer, sheet_name='Pareto_Optimal_Solutions', index=False)
+                    
+                    # 工作表2：所有解
+                    all_solutions_df = pd.DataFrame(final_X, columns=feature_names[:final_X.shape[1]])
+                    all_solutions_df['Objective_1'] = final_Y[:, 0]
+                    all_solutions_df['Objective_2'] = final_Y[:, 1]
+                    all_solutions_df.to_excel(writer, sheet_name='All_Solutions', index=False)
+                    
+                    # 工作表3：参数统计
+                    stats_data = []
+                    for i in range(final_X.shape[1]):
+                        feat_name = feature_names[i] if i < len(feature_names) else f'Variable_{i+1}'
+                        stats_data.append({
+                            'Parameter': feat_name,
+                            'All_Mean': final_X[:, i].mean(),
+                            'All_Std': final_X[:, i].std(),
+                            'All_Min': final_X[:, i].min(),
+                            'All_Max': final_X[:, i].max(),
+                            'Pareto_Mean': pareto_optimal_X[:, i].mean(),
+                            'Pareto_Std': pareto_optimal_X[:, i].std(),
+                            'Pareto_Min': pareto_optimal_X[:, i].min(),
+                            'Pareto_Max': pareto_optimal_X[:, i].max(),
+                        })
+                    
+                    stats_df = pd.DataFrame(stats_data)
+                    stats_df.to_excel(writer, sheet_name='Parameter_Statistics', index=False)
+                    
+                    # 工作表4：目标函数统计
+                    obj_stats = {
+                        'Metric': ['Min', 'Max', 'Mean', 'Std'],
+                        'All_Obj1': [final_Y[:, 0].min(), final_Y[:, 0].max(), 
+                                     final_Y[:, 0].mean(), final_Y[:, 0].std()],
+                        'All_Obj2': [final_Y[:, 1].min(), final_Y[:, 1].max(), 
+                                     final_Y[:, 1].mean(), final_Y[:, 1].std()],
+                        'Pareto_Obj1': [pareto_optimal_Y[:, 0].min(), pareto_optimal_Y[:, 0].max(), 
+                                        pareto_optimal_Y[:, 0].mean(), pareto_optimal_Y[:, 0].std()],
+                        'Pareto_Obj2': [pareto_optimal_Y[:, 1].min(), pareto_optimal_Y[:, 1].max(), 
+                                        pareto_optimal_Y[:, 1].mean(), pareto_optimal_Y[:, 1].std()]
+                    }
+                    
+                    obj_stats_df = pd.DataFrame(obj_stats)
+                    obj_stats_df.to_excel(writer, sheet_name='Objective_Statistics', index=False)
+                
+                print(f"📈 Excel报告已保存: {excel_path}")
+                return excel_path
+            else:
+                print("⚠️ 没有选择实验目录，无法保存Excel文件")
+                return None
+                
+        except Exception as e:
+            print(f"❌ 导出Excel失败: {e}")
+            return None
+    
     def generate_comprehensive_report(self, problem_name="catboost_min"):
         """生成综合分析报告（改进版）"""
         print("="*80)
